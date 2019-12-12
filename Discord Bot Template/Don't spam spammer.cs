@@ -13,7 +13,6 @@ namespace Discord_Bot_Template
         public static void Spam(IMessageChannel spamChannel)
         {
             _spamChannel = spamChannel;
-            _spamChannel.SendMessageAsync("dont spam!!");
             spamTimer.Elapsed += SpamTimer_Elapsed;
             spamTimer.Start();
         }

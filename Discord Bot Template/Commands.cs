@@ -32,6 +32,7 @@ namespace Discord_Bot_Template
         public async Task startSpam(IMessageChannel spamChannel)
         {
             await ReplyAsync("Activating spam treatment in #" + spamChannel.Name);
+            await spamChannel.SendMessageAsync("dont spam!!");
             DontSpamSpammer.Spam(spamChannel);
         }
         [Command("stop")]
