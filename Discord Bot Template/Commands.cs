@@ -25,6 +25,7 @@ namespace Discord_Bot_Template
     }
 
     [Group("spam")]
+    [RequireUserPermission(GuildPermission.Administrator, ErrorMessage = "You aren't allowed to use this command!")]
     public class AntiSpamModule : ModuleBase<SocketCommandContext>
     {
         [Command("start")]
