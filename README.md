@@ -5,7 +5,11 @@ A discord bot that kindly reminds your discord server members to not spam!
 ### Spam
 The group of commands that manages the spam in your server
 #### Start (channel)
-Starts sending "dont spam!!" to the channel specified every 10 seconds
+Starts sending "dont spam!!" to the channel specified every:
+- 1/10 secs,
+- 6/min,
+- 360/hr,
+- or 8640/day
 
 Note: Spamming to multiple channels is currently not possible
 
