@@ -33,7 +33,7 @@ namespace Discord_Bot_Template
             _client.Log += Log;
 
             await _client.LoginAsync(TokenType.Bot,
-                Environment.GetEnvironmentVariable("DiscordToken"));
+                Environment.GetEnvironmentVariable("DontSpam_API_Token", EnvironmentVariableTarget.User));
 
             await _client.StartAsync();
 

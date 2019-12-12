@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System.Threading.Tasks;
 
 namespace Discord_Bot_Template
@@ -20,6 +21,25 @@ namespace Discord_Bot_Template
         public async Task InputTest(string input)
         {
             await Context.Channel.SendMessageAsync($"You said: \"{input}\"");
+        }
+    }
+
+    [Group("spam")]
+    public class AntiSpamModule : ModuleBase<SocketCommandContext>
+    {
+        [Command("start")]
+        [Summary("Starts spamming \"dont spam!!\"")]
+        public async Task startSpam(IMessageChannel spamChannel)
+        {
+            await ReplyAsync("Activating spam treatment in #" + spamChannel.Name);
+            DontSpamSpammer.Spam(spamChannel);
+        }
+        [Command("stop")]
+        [Summary("Stops spamming \"dont spam!!\"")]
+        public async Task stopSpam()
+        {
+            await ReplyAsync("Stoping spam treatment");
+            DontSpamSpammer.StopSpam();
         }
     }
 }
