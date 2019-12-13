@@ -25,7 +25,7 @@ namespace Discord_Bot_Template
     }
 
     [Group("spam")]
-    [RequireUserPermission(GuildPermission.Administrator, ErrorMessage = "You aren't allowed to use this command!")]
+    [RequireUserPermission(GuildPermission.Administrator, ErrorMessage = "You aren't allowed to use this command!", Group = "Admin Command", NotAGuildErrorMessage = "This is a guild command and cannot be used here!")]
     public class AntiSpamModule : ModuleBase<SocketCommandContext>
     {
         [Command("start")]
@@ -40,7 +40,7 @@ namespace Discord_Bot_Template
             await ReplyAsync("Activating spam treatment in " + spamChannel.Name);
             DontSpamSpammer.SpamChannel(spamChannel);
             string message = $"Treatment started, to stop, do $spam stop {DontSpamSpammer.spamTimers.Count - 1}";
-            await spamChannel.SendMessageAsync(message);
+            if (spamChannel == Context.Channel) await spamChannel.SendMessageAsync(message); //only send the extra message if the spam is in a different channel
             await ReplyAsync(message);
         }
 
@@ -57,6 +57,7 @@ namespace Discord_Bot_Template
         }
     }
 
+    [RequireUserPermission(GuildPermission.Administrator, ErrorMessage = "You aren't allowed to use this command!", Group = "Admin Command", NotAGuildErrorMessage = "This is a guild command and connot be used here!")]
     public class PunishModule : ModuleBase<SocketCommandContext>
     {
         [Command("punish")]
