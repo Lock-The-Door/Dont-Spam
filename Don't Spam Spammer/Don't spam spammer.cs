@@ -51,7 +51,7 @@ namespace Discord_Bot_Template
             spamTimers[timerNumber].Elapsed += delegate (object sender, ElapsedEventArgs e) { SpamUserTimer_Elapsed(sender, e, infringer); };
             spamTimers[timerNumber].Start();
             //finish and start time up timer
-            userPunishmentLengths[timerNumber].Elapsed += delegate (object sender, ElapsedEventArgs e) { SpamUserStop(timerNumber, infringer, $"your {spamTimers[timerNumber].Interval / 1000} seconds is up!"); };
+            userPunishmentLengths[timerNumber].Elapsed += delegate (object sender, ElapsedEventArgs e) { SpamUserStop(timerNumber, infringer, $"your {userPunishmentLengths[timerNumber].Interval / 1000} seconds is up!"); };
             userPunishmentLengths[timerNumber].Start();
         }
 

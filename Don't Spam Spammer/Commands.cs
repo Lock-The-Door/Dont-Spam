@@ -65,7 +65,7 @@ namespace Discord_Bot_Template
         public async Task startDmSpam(IUser infringer, ulong punishmentTime)
         {
             //give response
-            await ReplyAsync($"Giving a private session of anti-spam therapy to {infringer.Mention}");
+            await ReplyAsync($"Giving a private session of anti-spam therapy to {infringer.Mention} for {punishmentTime} seconds");
 
             //alert infringer
             await infringer.SendMessageAsync($"Moderator {Context.User.Username} gave you a ***FREE!!!*** private session of anti-spam therapy to you for {punishmentTime} seconds!");
