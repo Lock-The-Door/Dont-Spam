@@ -30,18 +30,34 @@ namespace Discord_Bot_Template
     {
         [Command("start")]
         [Summary("Starts spamming \"dont spam!!\"")]
-        public async Task startSpam(IMessageChannel spamChannel)
+        public async Task startSpam(IMessageChannel spamChannel = null)
         {
+            if (spamChannel is null)
+            {
+                await ReplyAsync("You have to enter a channel to start the treatment!");
+                return;
+            }
             await ReplyAsync("Activating spam treatment in #" + spamChannel.Name);
-            await spamChannel.SendMessageAsync("dont spam!!");
-            DontSpamSpammer.Spam(spamChannel);
+            DontSpamSpammer.SpamChannel(spamChannel);
+            await spamChannel.SendMessageAsync($"Treatment started, to stop, do $stop {DontSpamSpammer.spamTimers.Count}");
+            //await spamChannel.SendMessageAsync("dont spam!!");
         }
         [Command("stop")]
         [Summary("Stops spamming \"dont spam!!\"")]
-        public async Task stopSpam()
+        public async Task stopSpam(int id)
         {
             await ReplyAsync("Stoping spam treatment");
-            DontSpamSpammer.StopSpam();
+            DontSpamSpammer.StopSpam(id);
+        }
+    }
+
+    public class PunishModule : ModuleBase<SocketCommandContext>
+    {
+        [Command("punish")]
+        [Summary("Starts sending DM messages to the use specified as a punishment")]
+        public async Task startDmSpam(IUser infringer, ulong punishmentTime)
+        {
+            await ReplyAsync($"Giving a private session of anti-spam therapy to {infringer.Mention}");
         }
     }
 }
