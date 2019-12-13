@@ -37,16 +37,22 @@ namespace Discord_Bot_Template
                 await ReplyAsync("You have to enter a channel to start the treatment!");
                 return;
             }
-            await ReplyAsync("Activating spam treatment in #" + spamChannel.Name);
+            await ReplyAsync("Activating spam treatment in " + spamChannel.Name);
             DontSpamSpammer.SpamChannel(spamChannel);
-            await spamChannel.SendMessageAsync($"Treatment started, to stop, do $stop {DontSpamSpammer.spamTimers.Count}");
-            //await spamChannel.SendMessageAsync("dont spam!!");
+            string message = $"Treatment started, to stop, do $spam stop {DontSpamSpammer.spamTimers.Count - 1}";
+            await spamChannel.SendMessageAsync(message);
+            await ReplyAsync(message);
         }
+
         [Command("stop")]
         [Summary("Stops spamming \"dont spam!!\"")]
         public async Task stopSpam(int id)
         {
-            await ReplyAsync("Stoping spam treatment");
+            //check and give response
+            if (!DontSpamSpammer.treatmentIdChannelPairs.TryGetValue(id, out IMessageChannel spamChannel))
+            { await ReplyAsync("That is not a valid channel treatment id!"); return; }
+            
+            await ReplyAsync($"Stopping spam treatment in {spamChannel.Name} ({id})");
             DontSpamSpammer.StopSpam(id);
         }
     }
@@ -57,7 +63,30 @@ namespace Discord_Bot_Template
         [Summary("Starts sending DM messages to the use specified as a punishment")]
         public async Task startDmSpam(IUser infringer, ulong punishmentTime)
         {
+            //give response
             await ReplyAsync($"Giving a private session of anti-spam therapy to {infringer.Mention}");
+
+            //alert infringer
+            await infringer.SendMessageAsync($"Moderator {Context.User.Username} gave you a ***FREE!!!*** private session of anti-spam therapy to you for {punishmentTime} seconds!");
+
+            //start the treatment
+            DontSpamSpammer.SpamUser(infringer, punishmentTime);
+
+            //give stop id
+            await ReplyAsync($"Private session started, do $override {DontSpamSpammer.spamTimers.Count - 1} to override the timer.");
+        }
+
+        [Command("override")]
+        [Summary("Manually stop sending DM spam messages")]
+        public async Task stopDmSpam(int id = -1)
+        {
+            //get user first as required
+            if (!DontSpamSpammer.punishmentIdUserPairs.TryGetValue(id, out IUser infringer))
+            { await ReplyAsync("That is not a valid user punishment id!"); return; }
+            //respond
+            await ReplyAsync($"Stopping {infringer.Username}'s private anti-spam therapy seesion");
+            //stop the treatment
+            DontSpamSpammer.SpamUserStop(id, infringer, $"moderator, {Context.User.Username} stopped the treatment!");
         }
     }
 }
