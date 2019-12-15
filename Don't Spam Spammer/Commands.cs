@@ -112,6 +112,11 @@ namespace Discord_Bot_Template
         [Summary("Stacks an existing punishment and increases the time")]
         public async Task stackDmSpam(IUser infringer, ulong punishmentTime)
         {
+            //get user and check if valid
+            if (!DontSpamSpammer.userPunishmentIdPairs.TryGetValue(infringer, out int id))
+            { await ReplyAsync("That is not a valid user punishment!"); return; }
+            else if (!DontSpamSpammer.spamTimers[id].Enabled)
+            { await ReplyAsync("That is not a valid user punishment!"); return; }
             //give response
             await ReplyAsync($"Increasing {infringer.Mention}'s punishment time by {punishmentTime} seconds");
             //alert infringer
@@ -128,8 +133,10 @@ namespace Discord_Bot_Template
         [Summary("Manually stop sending DM spam messages")]
         public async Task stopDmSpam(IUser infringer)
         {
-            //get user first as required
-            if (DontSpamSpammer.userPunishmentIdPairs.TryGetValue(infringer, out int id) && !DontSpamSpammer.spamTimers[id].Enabled)
+            //get user first as required and check if valid
+            if (!DontSpamSpammer.userPunishmentIdPairs.TryGetValue(infringer, out int id))
+            { await ReplyAsync("That is not a valid user punishment!"); return; }
+            else if (!DontSpamSpammer.spamTimers[id].Enabled)
             { await ReplyAsync("That is not a valid user punishment!"); return; }
             //respond
             await ReplyAsync($"Stopping {infringer.Username}'s private anti-spam therapy session");
