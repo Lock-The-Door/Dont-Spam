@@ -30,7 +30,7 @@ namespace Discord_Bot_Template
         public static void SpamUser(IUser infringer, ulong length)
         {
             //set up spam timer
-            spamTimers.Add(new Timer(10000));
+            spamTimers.Add(new Timer(5000));
             int timerNumber = spamTimers.Count - 1;
             //set up time up timer
             int userTimerNumber;
