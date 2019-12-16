@@ -84,8 +84,17 @@ namespace Discord_Bot_Template
     {
         [Command("punish")]
         [Summary("Starts sending DM messages to the use specified as a punishment")]
-        public async Task startDmSpam(IUser infringer, ulong punishmentTime)
+        public async Task startDmSpam(IUser infringer, double punishmentTime)
         {
+            //prevent negative numbers
+            if (punishmentTime <= 0)
+            { await ReplyAsync("Please enter a number over 0"); return; }
+            //do sec to milisec convertion here to stop asap
+            try
+            { punishmentTime *= 1000; }
+            catch
+            { await ReplyAsync("The number you entered is too high"); return; }
+
             //don't execute if the infringer is itself
             if (infringer.Discriminator == Context.Client.CurrentUser.Discriminator)
             { await ReplyAsync("I cannot punish myself!"); return; }
@@ -105,7 +114,7 @@ namespace Discord_Bot_Template
             await infringer.SendMessageAsync($"Moderator {Context.User.Username} gave you a ***FREE!!!*** private session of anti-spam therapy to you for {punishmentTime} seconds!");
 
             //start the treatment
-            DontSpamSpammer.SpamUser(infringer, punishmentTime);
+            DontSpamSpammer.SpamUser(infringer, punishmentTime, Context.Message);
 
             //give stop command
             await ReplyAsync($"Private session started, do $override {infringer.Mention} to override the timer.");
@@ -113,13 +122,34 @@ namespace Discord_Bot_Template
 
         [Command("stack")]
         [Summary("Stacks an existing punishment and increases the time")]
-        public async Task stackDmSpam(IUser infringer, ulong punishmentTime)
+        public async Task stackDmSpam(IUser infringer, double punishmentTime)
         {
+            //prevent negative numbers
+            if (punishmentTime <= 0)
+            { await ReplyAsync("Please enter a number over 0"); return; }
+            //do sec to milisec convertion here to stop asap
+            try
+            { 
+                //see if original is small enough
+                punishmentTime *= 1000.0;
+            }
+            catch
+            { await ReplyAsync("The number you entered is too high!"); return; }
+
             //get user and check if valid
             if (!DontSpamSpammer.userPunishmentIdPairs.TryGetValue(infringer, out int id))
             { await ReplyAsync("That is not a valid user punishment!"); return; }
             else if (!DontSpamSpammer.spamTimers[id].Enabled)
             { await ReplyAsync("That is not a valid user punishment!"); return; }
+
+            try
+            {
+                //see if combined number is small enough
+                punishmentTime += DontSpamSpammer.spamTimers[id].Interval - DontSpamSpammer.punishmentIdElapsedTimePairs[id].ElapsedMilliseconds;
+            }
+            catch 
+            { await ReplyAsync("The number you entered is too high!"); return; }
+
             //give response
             await ReplyAsync($"Increasing {infringer.Mention}'s punishment time by {punishmentTime} seconds");
             //alert infringer

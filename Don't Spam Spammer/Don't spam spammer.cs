@@ -3,6 +3,7 @@ using System.Timers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord.WebSocket;
+using System;
 
 namespace Discord_Bot_Template
 {
@@ -27,7 +28,7 @@ namespace Discord_Bot_Template
             spamTimers[timerNumber].Start();
         }
 
-        public static void SpamUser(IUser infringer, ulong length)
+        public static void SpamUser(IUser infringer, double length, SocketMessage commandUsage)
         {
             //set up spam timer
             spamTimers.Add(new Timer(5000));
@@ -44,8 +45,16 @@ namespace Discord_Bot_Template
                 //link the id to the user
                 userPunishmentIdPairs.Add(infringer, timerNumber);
             }
-            //create new timer for user
-            userPunishmentLengths.Add(timerNumber, new Timer(length * 1000));
+            try
+            {
+                userPunishmentLengths.Add(timerNumber, new Timer(length));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                commandUsage.Channel.SendMessageAsync("I encountered an error: " + e.Message);
+                return;
+            }
             //set reference number
             userTimerNumber = userPunishmentLengths.Count - 1;
             //turn off auto-reset
@@ -62,12 +71,12 @@ namespace Discord_Bot_Template
             userPunishmentLengths[timerNumber].Start();
         }
 
-        public static void StackSpamUser(IUser infringer, ulong timeIncreased)
+        public static void StackSpamUser(IUser infringer, double increasedTimeTotal)
         {
             //get id
             int id = userPunishmentIdPairs[infringer];
             //modify time up timer
-            userPunishmentLengths[id].Interval = timeIncreased * 1000 + (userPunishmentLengths[id].Interval - punishmentIdElapsedTimePairs[id].ElapsedMilliseconds);
+            userPunishmentLengths[id].Interval = increasedTimeTotal;
         }
 
         public static void StopSpam(int id)
