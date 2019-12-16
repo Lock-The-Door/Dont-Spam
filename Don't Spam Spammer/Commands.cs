@@ -86,6 +86,9 @@ namespace Discord_Bot_Template
         [Summary("Starts sending DM messages to the use specified as a punishment")]
         public async Task startDmSpam(IUser infringer, ulong punishmentTime)
         {
+            //don't execute if the infringer is itself
+            if (infringer.Discriminator == Context.Client.CurrentUser.Discriminator)
+            { await ReplyAsync("I cannot punish myself!"); return; }
             //check if stack is required
             if (DontSpamSpammer.userPunishmentIdPairs.TryGetValue(infringer, out int id) && DontSpamSpammer.spamTimers[id].Enabled)
             {
