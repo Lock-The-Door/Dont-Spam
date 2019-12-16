@@ -156,7 +156,7 @@ namespace Discord_Bot_Template
             await infringer.SendMessageAsync($"Moderator {Context.User.Username} increased your private session of anti-spam therapy by {punishmentTime} seconds for ***FREE!!!***");
 
             //increase treatment
-            DontSpamSpammer.StackSpamUser(infringer, punishmentTime);
+            DontSpamSpammer.StackSpamUser(infringer, punishmentTime, Context.Message);
 
             //give stop command
             await ReplyAsync($"Private session time increased, do $override {infringer.Mention} to override the timer.");

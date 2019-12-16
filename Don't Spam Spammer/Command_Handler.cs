@@ -48,18 +48,6 @@ namespace Discord_Bot_Template
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
 
-            // Create a number to track where the prefix ends and the command begins
-            int argPos = 0;
-
-            // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-            if (!(message.HasCharPrefix('$', ref argPos) ||
-                message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
-                message.Author.IsBot)
-                return;
-
-            // Create a WebSocket-based command context based on the message
-            var context = new SocketCommandContext(_client, message);
-
             //detect if user is spammming
             Stopwatch userLastSent;
             if (!userStopwatchPairs.TryGetValue(message.Author, out userLastSent))
@@ -70,8 +58,8 @@ namespace Discord_Bot_Template
                 userStopwatchPairs[message.Author].Start();
                 //don't count first message
             } //else user has stop watch
+            else
             {
-
                 //see if spamming
                 if (userLastSent.ElapsedMilliseconds < 1000)
                 {
@@ -89,10 +77,22 @@ namespace Discord_Bot_Template
                     //if got more than 4 infractions, spam them for 30 seconds
                     if (userInfractionsPairs[message.Author] > 4)
                     {
-                        DontSpamSpammer.SpamUser(message.Author, 30, message);
+                        await message.Author.SendMessageAsync("You spammed so I spam you poopoo");
+
+                        
+                        if (DontSpamSpammer.userPunishmentIdPairs.TryGetValue(message.Author, out int id) && DontSpamSpammer.spamTimers[id].Enabled)
+                        {
+                            //if it is stack the punishment instead of creating a new one
+                            DontSpamSpammer.StackSpamUser(message.Author, 30, message);
+                        }
+                        else //otherwise create new punishment
+                        {
+                            DontSpamSpammer.SpamUser(message.Author, 30, message);
+                        }
                     }
                 }
                 //if not spamming remove one infraction
+                else
                 {
                     //add infraction since spamming
                     ulong infractions;
@@ -105,7 +105,22 @@ namespace Discord_Bot_Template
                         userInfractionsPairs[message.Author]--;
                     }
                 }
+                //a message was sent so restart timer
+                userStopwatchPairs[message.Author].Restart();
             }
+
+            // Create a number to track where the prefix ends and the command begins
+            int argPos = 0;
+
+            // Determine if the message is a command based on the prefix and make sure no bots trigger commands
+            if (!(message.HasCharPrefix('$', ref argPos) ||
+                message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
+                message.Author.IsBot)
+                return;
+
+            // Create a WebSocket-based command context based on the message
+            var context = new SocketCommandContext(_client, message);
+
 
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.

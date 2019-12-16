@@ -47,6 +47,7 @@ namespace Discord_Bot_Template
             }
             try
             {
+                
                 userPunishmentLengths.Add(timerNumber, new Timer(length));
             }
             catch (Exception e)
@@ -71,12 +72,21 @@ namespace Discord_Bot_Template
             userPunishmentLengths[timerNumber].Start();
         }
 
-        public static void StackSpamUser(IUser infringer, double increasedTimeTotal)
+        public static void StackSpamUser(IUser infringer, double increasedTimeTotal, SocketMessage commandUsage)
         {
             //get id
             int id = userPunishmentIdPairs[infringer];
             //modify time up timer
-            userPunishmentLengths[id].Interval = increasedTimeTotal;
+            try
+            {
+                userPunishmentLengths[id].Interval = increasedTimeTotal;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                commandUsage.Channel.SendMessageAsync("I encountered an error: " + e.Message);
+                return;
+            }
         }
 
         public static void StopSpam(int id)
