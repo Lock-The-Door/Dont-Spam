@@ -14,8 +14,8 @@ Starts sending "dont spam!!" to the channel specified every:
 #### Spam Stop
 Stops sending "dont spam!!" to the channel that is being spammed
 
-### Punish
-#### Punish (User) (Time in seconds)
+### Treat
+#### Treat (User) (Time in seconds)
 Starts sending "don't spam!!" to the user specified for the time specified every:
 - 1/5 secs,
 - 12/min,
